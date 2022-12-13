@@ -47,7 +47,7 @@ import { Signer } from "ethers";
 import { useSnackbar } from "notistack";
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useWallet } from "wormhole-wallet-aggregator-react";
+import { useWalletFromChain } from "wormhole-wallet-aggregator-react";
 import { useAptosContext } from "../contexts/AptosWalletContext";
 import { useEthereumProvider } from "../contexts/EthereumProviderContext";
 import { useInjectiveContext } from "../contexts/InjectiveWalletContext";
@@ -442,7 +442,7 @@ export function useHandleCreateWrapped(shouldUpdate: boolean) {
   const terraWallet = useConnectedWallet();
   const terraFeeDenom = useSelector(selectTerraFeeDenom);
   const xplaWallet = useXplaConnectedWallet();
-  const algoWallet = useWallet();
+  const algoWallet = useWalletFromChain(targetChain);
   const { account: aptosAccount, signAndSubmitTransaction } = useAptosContext();
   const aptosAddress = aptosAccount?.address?.toString();
   const { wallet: injWallet, address: injAddress } = useInjectiveContext();

@@ -23,7 +23,7 @@ import { Algodv2 } from "algosdk";
 import { formatUnits } from "ethers/lib/utils";
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useWallet } from "wormhole-wallet-aggregator-react";
+import { useWallet, useWalletFromChain } from "wormhole-wallet-aggregator-react";
 import { useAptosContext } from "../contexts/AptosWalletContext";
 import { useEthereumProvider } from "../contexts/EthereumProviderContext";
 import { useInjectiveContext } from "../contexts/InjectiveWalletContext";
@@ -80,7 +80,7 @@ function useGetTargetParsedTokenAccounts() {
   } = useEthereumProvider();
   const xplaWallet = useXplaConnectedWallet();
   const hasCorrectEvmNetwork = evmChainId === getEvmChainId(targetChain);
-  const wallet = useWallet();
+  const wallet = useWalletFromChain(targetChain);
   const { account: aptosAccount } = useAptosContext();
   const aptosAddress = aptosAccount?.address?.toString();
   const { address: injAddress } = useInjectiveContext();

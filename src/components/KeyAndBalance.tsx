@@ -9,7 +9,7 @@ import {
   isEVMChain,
   isTerraChain,
 } from "@certusone/wormhole-sdk";
-import AlgorandWalletKey from "./AlgorandWalletKey";
+// import AlgorandWalletKey from "./AlgorandWalletKey";
 import AptosWalletKey from "./AptosWalletKey";
 import ConnectWalletButton from "./ConnectWalletButton";
 import EthereumSignerKey from "./EthereumSignerKey";

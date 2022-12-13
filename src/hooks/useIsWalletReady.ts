@@ -13,7 +13,7 @@ import { hexlify, hexStripZeros } from "@ethersproject/bytes";
 import { useConnectedWallet } from "@terra-money/wallet-provider";
 import { useConnectedWallet as useXplaConnectedWallet } from "@xpla/wallet-provider";
 import { useCallback, useMemo } from "react";
-import { useWallet } from "wormhole-wallet-aggregator-react";
+import { useWalletFromChain } from "wormhole-wallet-aggregator-react";
 import { useAptosContext } from "../contexts/AptosWalletContext";
 import {
   ConnectType,
@@ -64,7 +64,7 @@ function useIsWalletReady(
   const hasEthInfo = !!provider && !!signerAddress;
   const correctEvmNetwork = getEvmChainId(chainId);
   const hasCorrectEvmNetwork = evmChainId === correctEvmNetwork;
-  const wallet = useWallet();
+  const wallet = useWalletFromChain(chainId);
   const algoPK = wallet?.getPublicKey();
   const xplaWallet = useXplaConnectedWallet();
   const hasXplaWallet = !!xplaWallet;

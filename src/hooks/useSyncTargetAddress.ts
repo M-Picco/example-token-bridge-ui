@@ -20,7 +20,7 @@ import BN from "bn.js";
 import { getTransactionLastResult } from "near-api-js/lib/providers";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useWallet } from "wormhole-wallet-aggregator-react";
+import { useWallet, useWalletFromChain } from "wormhole-wallet-aggregator-react";
 import { useAptosContext } from "../contexts/AptosWalletContext";
 import { useEthereumProvider } from "../contexts/EthereumProviderContext";
 import { useInjectiveContext } from "../contexts/InjectiveWalletContext";
@@ -55,7 +55,7 @@ function useSyncTargetAddress(shouldFire: boolean, nft?: boolean) {
   const targetTokenAccountPublicKey = targetParsedTokenAccount?.publicKey;
   const terraWallet = useConnectedWallet();
   const xplaWallet = useXplaConnectedWallet();
-  const algoWallet = useWallet();
+  const algoWallet = useWalletFromChain(targetChain);
   const { account: aptosAccount } = useAptosContext();
   const aptosAddress = aptosAccount?.address?.toString();
   const { address: injAddress } = useInjectiveContext();

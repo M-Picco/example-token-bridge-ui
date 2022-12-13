@@ -1,19 +1,21 @@
-import { useAlgorandContext } from "../contexts/AlgorandWalletContext";
-import ToggleConnectedButton from "./ToggleConnectedButton";
+export {};
 
-const AlgorandWalletKey = () => {
-  const { connect, disconnect, accounts } = useAlgorandContext();
+// import { useAlgorandContext } from "../contexts/AlgorandWalletContext";
+// import ToggleConnectedButton from "./ToggleConnectedButton";
 
-  return (
-    <>
-      <ToggleConnectedButton
-        connect={connect}
-        disconnect={disconnect}
-        connected={!!accounts[0]}
-        pk={accounts[0]?.address || ""}
-      />
-    </>
-  );
-};
+// const AlgorandWalletKey = () => {
+//   const { connect, disconnect, accounts } = useAlgorandContext();
 
-export default AlgorandWalletKey;
+//   return (
+//     <>
+//       <ToggleConnectedButton
+//         connect={connect}
+//         disconnect={disconnect}
+//         connected={!!accounts[0]}
+//         pk={accounts[0]?.address || ""}
+//       />
+//     </>
+//   );
+// };
+
+// export default AlgorandWalletKey;

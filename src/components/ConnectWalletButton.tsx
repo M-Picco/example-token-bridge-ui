@@ -1,12 +1,12 @@
 import { ChainId } from "@certusone/wormhole-sdk";
 import { useCallback, useState } from "react";
 import { Wallet } from "wormhole-wallet-aggregator";
-import { useWallet, useChangeWallet } from "wormhole-wallet-aggregator-react";
+import { useChangeWallet, useWalletFromChain } from "wormhole-wallet-aggregator-react";
 import ConnectWalletDialog from "./ConnectWalletDialog";
 import ToggleConnectedButton from "./ToggleConnectedButton";
 
 const ConnectWalletButton = ({ chainId }: { chainId: ChainId }) => {
-  const wallet = useWallet();
+  const wallet = useWalletFromChain(chainId);
   const changeWallet = useChangeWallet();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 

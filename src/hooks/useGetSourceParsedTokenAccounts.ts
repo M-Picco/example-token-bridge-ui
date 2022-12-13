@@ -38,7 +38,7 @@ import { ethers } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useWallet } from "wormhole-wallet-aggregator-react";
+import { useWalletFromChain } from "wormhole-wallet-aggregator-react";
 import {
   Provider,
   useEthereumProvider
@@ -852,7 +852,7 @@ function useGetAvailableTokens(nft: boolean = false) {
   const solanaWallet = useSolanaWallet();
   const solPK = solanaWallet?.publicKey;
   const { provider, signerAddress } = useEthereumProvider();
-  const wallet = useWallet();
+  const wallet = useWalletFromChain(lookupChain);
   const { accountId: nearAccountId } = useNearContext();
 
   const [covalent, setCovalent] = useState<any>(undefined);
