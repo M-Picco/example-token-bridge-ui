@@ -34,7 +34,7 @@ import {
   parseSequenceFromLogTerra,
   parseSequenceFromLogXpla,
   TerraChainId,
-  uint8ArrayToHex,
+  uint8ArrayToHex
 } from "@certusone/wormhole-sdk";
 import { WalletStrategy } from "@injectivelabs/wallet-ts";
 import { Alert } from "@material-ui/lab";
@@ -43,11 +43,11 @@ import { WalletContextState } from "@solana/wallet-adapter-react";
 import { Connection, PublicKey } from "@solana/web3.js";
 import {
   ConnectedWallet,
-  useConnectedWallet,
+  useConnectedWallet
 } from "@terra-money/wallet-provider";
 import {
   ConnectedWallet as XplaConnectedWallet,
-  useConnectedWallet as useXplaConnectedWallet,
+  useConnectedWallet as useXplaConnectedWallet
 } from "@xpla/wallet-provider";
 import algosdk from "algosdk";
 import { Types } from "aptos";
@@ -55,7 +55,7 @@ import { Signer } from "ethers";
 import { useSnackbar } from "notistack";
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useAlgorandContext } from "../contexts/AlgorandWalletContext";
+import { useWallet } from "wormhole-wallet-aggregator-react";
 import { useAptosContext } from "../contexts/AptosWalletContext";
 import { useEthereumProvider } from "../contexts/EthereumProviderContext";
 import { useInjectiveContext } from "../contexts/InjectiveWalletContext";
@@ -64,7 +64,7 @@ import { useSolanaWallet } from "../contexts/SolanaWalletContext";
 import {
   setAttestTx,
   setIsSending,
-  setSignedVAAHex,
+  setSignedVAAHex
 } from "../store/attestSlice";
 import {
   selectAttestIsSendComplete,
@@ -72,13 +72,13 @@ import {
   selectAttestIsTargetComplete,
   selectAttestSourceAsset,
   selectAttestSourceChain,
-  selectTerraFeeDenom,
+  selectTerraFeeDenom
 } from "../store/selectors";
 import { signSendAndConfirmAlgorand } from "../utils/algorand";
 import {
   getAptosClient,
   getEmitterAddressAndSequenceFromResult,
-  waitForSignAndSubmitTransaction,
+  waitForSignAndSubmitTransaction
 } from "../utils/aptos";
 import {
   ALGORAND_BRIDGE_ID,
@@ -92,14 +92,14 @@ import {
   SOLANA_HOST,
   SOL_BRIDGE_ADDRESS,
   SOL_TOKEN_BRIDGE_ADDRESS,
-  WORMHOLE_RPC_HOSTS,
+  WORMHOLE_RPC_HOSTS
 } from "../utils/consts";
+import { broadcastInjectiveTx } from "../utils/injective";
 import { makeNearAccount, makeNearProvider, signAndSendTransactions } from "../utils/near";
 import parseError from "../utils/parseError";
 import { signSendAndConfirm } from "../utils/solana";
 import { postWithFees, waitForTerraExecution } from "../utils/terra";
 import { postWithFeesXpla, waitForXplaExecution } from "../utils/xpla";
-import { broadcastInjectiveTx } from "../utils/injective";
 
 async function algo(
   dispatch: any,
@@ -544,7 +544,7 @@ export function useHandleAttest() {
   const terraWallet = useConnectedWallet();
   const xplaWallet = useXplaConnectedWallet();
   const terraFeeDenom = useSelector(selectTerraFeeDenom);
-  const { accounts: algoAccounts } = useAlgorandContext();
+  const algoWallet = useWallet();
   const { account: aptosAccount, signAndSubmitTransaction } = useAptosContext();
   const aptosAddress = aptosAccount?.address?.toString();
   const { wallet: injWallet, address: injAddress } = useInjectiveContext();
@@ -566,8 +566,8 @@ export function useHandleAttest() {
       );
     } else if (sourceChain === CHAIN_ID_XPLA && !!xplaWallet) {
       xpla(dispatch, enqueueSnackbar, xplaWallet, sourceAsset);
-    } else if (sourceChain === CHAIN_ID_ALGORAND && algoAccounts[0]) {
-      algo(dispatch, enqueueSnackbar, algoAccounts[0].address, sourceAsset);
+    } else if (sourceChain === CHAIN_ID_ALGORAND && algoWallet?.getPublicKey()) {
+      algo(dispatch, enqueueSnackbar, algoWallet.getPublicKey()!, sourceAsset);
     } else if (sourceChain === CHAIN_ID_APTOS && aptosAddress) {
       aptos(dispatch, enqueueSnackbar, sourceAsset, signAndSubmitTransaction);
     } else if (sourceChain === CHAIN_ID_INJECTIVE && injWallet && injAddress) {
@@ -586,7 +586,7 @@ export function useHandleAttest() {
     terraWallet,
     sourceAsset,
     terraFeeDenom,
-    algoAccounts,
+    wallet,
     xplaWallet,
     aptosAddress,
     signAndSubmitTransaction,

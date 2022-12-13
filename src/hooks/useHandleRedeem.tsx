@@ -20,7 +20,7 @@ import {
   redeemOnTerra,
   redeemOnXpla,
   TerraChainId,
-  uint8ArrayToHex,
+  uint8ArrayToHex
 } from "@certusone/wormhole-sdk";
 import { completeTransferAndRegister } from "@certusone/wormhole-sdk/lib/esm/aptos/api/tokenBridge";
 import { WalletStrategy } from "@injectivelabs/wallet-ts";
@@ -30,11 +30,11 @@ import { WalletContextState } from "@solana/wallet-adapter-react";
 import { Connection } from "@solana/web3.js";
 import {
   ConnectedWallet,
-  useConnectedWallet,
+  useConnectedWallet
 } from "@terra-money/wallet-provider";
 import {
   ConnectedWallet as XplaConnectedWallet,
-  useConnectedWallet as useXplaConnectedWallet,
+  useConnectedWallet as useXplaConnectedWallet
 } from "@xpla/wallet-provider";
 import algosdk from "algosdk";
 import { Types } from "aptos";
@@ -43,7 +43,7 @@ import { Signer } from "ethers";
 import { useSnackbar } from "notistack";
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useAlgorandContext } from "../contexts/AlgorandWalletContext";
+import { useWallet } from "wormhole-wallet-aggregator-react";
 import { useAptosContext } from "../contexts/AptosWalletContext";
 import { useEthereumProvider } from "../contexts/EthereumProviderContext";
 import { useInjectiveContext } from "../contexts/InjectiveWalletContext";
@@ -52,13 +52,13 @@ import { useSolanaWallet } from "../contexts/SolanaWalletContext";
 import {
   selectTerraFeeDenom,
   selectTransferIsRedeeming,
-  selectTransferTargetChain,
+  selectTransferTargetChain
 } from "../store/selectors";
 import { setIsRedeeming, setRedeemTx } from "../store/transferSlice";
 import { signSendAndConfirmAlgorand } from "../utils/algorand";
 import {
   getAptosClient,
-  waitForSignAndSubmitTransaction,
+  waitForSignAndSubmitTransaction
 } from "../utils/aptos";
 import {
   ACALA_RELAY_URL,
@@ -70,7 +70,7 @@ import {
   NEAR_TOKEN_BRIDGE_ACCOUNT,
   SOLANA_HOST,
   SOL_BRIDGE_ADDRESS,
-  SOL_TOKEN_BRIDGE_ADDRESS,
+  SOL_TOKEN_BRIDGE_ADDRESS
 } from "../utils/consts";
 import { broadcastInjectiveTx } from "../utils/injective";
 import { makeNearAccount, makeNearProvider, signAndSendTransactions } from "../utils/near";
@@ -392,7 +392,7 @@ export function useHandleRedeem() {
   const terraWallet = useConnectedWallet();
   const terraFeeDenom = useSelector(selectTerraFeeDenom);
   const xplaWallet = useXplaConnectedWallet();
-  const { accounts: algoAccounts } = useAlgorandContext();
+  const algoWallet = useWallet();
   const { account: aptosAccount, signAndSubmitTransaction } = useAptosContext();
   const aptosAddress = aptosAccount?.address?.toString();
   const { wallet: injWallet, address: injAddress } = useInjectiveContext();
@@ -431,10 +431,10 @@ export function useHandleRedeem() {
       aptos(dispatch, enqueueSnackbar, signedVAA, signAndSubmitTransaction);
     } else if (
       targetChain === CHAIN_ID_ALGORAND &&
-      algoAccounts[0] &&
+      algoWallet?.getPublicKey() &&
       !!signedVAA
     ) {
-      algo(dispatch, enqueueSnackbar, algoAccounts[0]?.address, signedVAA);
+      algo(dispatch, enqueueSnackbar, algoWallet.getPublicKey()!, signedVAA);
     } else if (
       targetChain === CHAIN_ID_INJECTIVE &&
       injWallet &&
@@ -461,7 +461,7 @@ export function useHandleRedeem() {
     solPK,
     terraWallet,
     terraFeeDenom,
-    algoAccounts,
+    algoWallet,
     xplaWallet,
     aptosAddress,
     signAndSubmitTransaction,
@@ -499,10 +499,10 @@ export function useHandleRedeem() {
       ); //TODO isNative = true
     } else if (
       targetChain === CHAIN_ID_ALGORAND &&
-      algoAccounts[0] &&
+      algoWallet?.getPublicKey() &&
       !!signedVAA
     ) {
-      algo(dispatch, enqueueSnackbar, algoAccounts[0]?.address, signedVAA);
+      algo(dispatch, enqueueSnackbar, algoWallet.getPublicKey()!, signedVAA);
     } else if (
       targetChain === CHAIN_ID_INJECTIVE &&
       injWallet &&
@@ -521,7 +521,7 @@ export function useHandleRedeem() {
     solPK,
     terraWallet,
     terraFeeDenom,
-    algoAccounts,
+    algoWallet,
     injWallet,
     injAddress,
   ]);

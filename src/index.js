@@ -4,8 +4,8 @@ import { SnackbarProvider } from "notistack";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { HashRouter } from "react-router-dom";
+import { initWallets, WalletContextProvider } from "wormhole-wallet-aggregator-react";
 import App from "./App";
-import { AlgorandContextProvider } from "./contexts/AlgorandWalletContext";
 import AptosWalletProvider from "./contexts/AptosWalletContext";
 import { EthereumProviderProvider } from "./contexts/EthereumProviderContext";
 import InjectiveWalletProvider from "./contexts/InjectiveWalletContext";
@@ -25,9 +25,9 @@ ReactDOM.render(
         <ErrorBoundary>
           <SnackbarProvider maxSnack={3}>
             <SolanaWalletProvider>
-              <EthereumProviderProvider>
-                <TerraWalletProvider>
-                  <AlgorandContextProvider>
+              <WalletContextProvider availableWallets={initWallets()}>
+                <EthereumProviderProvider>
+                  <TerraWalletProvider>
                     <XplaWalletProvider>
                       <AptosWalletProvider>
                         <InjectiveWalletProvider>
@@ -39,9 +39,9 @@ ReactDOM.render(
                         </InjectiveWalletProvider>
                       </AptosWalletProvider>
                     </XplaWalletProvider>
-                  </AlgorandContextProvider>
-                </TerraWalletProvider>
-              </EthereumProviderProvider>
+                  </TerraWalletProvider>
+                </EthereumProviderProvider>
+              </WalletContextProvider>
             </SolanaWalletProvider>
           </SnackbarProvider>
         </ErrorBoundary>

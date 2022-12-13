@@ -12,7 +12,7 @@ import {
   isNativeDenomXpla,
   isTerraChain,
   parseSmartContractStateResponse,
-  terra,
+  terra
 } from "@certusone/wormhole-sdk";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { LCDClient } from "@terra-money/terra.js";
@@ -23,37 +23,34 @@ import { Algodv2 } from "algosdk";
 import { formatUnits } from "ethers/lib/utils";
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useAlgorandContext } from "../contexts/AlgorandWalletContext";
+import { useWallet } from "wormhole-wallet-aggregator-react";
 import { useAptosContext } from "../contexts/AptosWalletContext";
 import { useEthereumProvider } from "../contexts/EthereumProviderContext";
 import { useInjectiveContext } from "../contexts/InjectiveWalletContext";
+import { useNearContext } from "../contexts/NearWalletContext";
 import { useSolanaWallet } from "../contexts/SolanaWalletContext";
 import {
   selectTransferTargetAsset,
-  selectTransferTargetChain,
+  selectTransferTargetChain
 } from "../store/selectors";
 import { setTargetParsedTokenAccount } from "../store/transferSlice";
 import { getAptosClient } from "../utils/aptos";
 import {
   ALGORAND_HOST,
   getEvmChainId,
-  getTerraConfig,
-  SOLANA_HOST,
-  XPLA_LCD_CLIENT_CONFIG,
-  NATIVE_NEAR_PLACEHOLDER,
-  NATIVE_NEAR_DECIMALS,
+  getTerraConfig, NATIVE_NEAR_DECIMALS, NATIVE_NEAR_PLACEHOLDER, SOLANA_HOST,
+  XPLA_LCD_CLIENT_CONFIG
 } from "../utils/consts";
 import {
   getInjectiveBankClient,
   getInjectiveWasmClient,
-  NATIVE_INJECTIVE_DECIMALS,
+  NATIVE_INJECTIVE_DECIMALS
 } from "../utils/injective";
+import { makeNearAccount } from "../utils/near";
 import { NATIVE_TERRA_DECIMALS } from "../utils/terra";
 import { NATIVE_XPLA_DECIMALS } from "../utils/xpla";
 import { createParsedTokenAccount } from "./useGetSourceParsedTokenAccounts";
 import useMetadata from "./useMetadata";
-import { useNearContext } from "../contexts/NearWalletContext";
-import { makeNearAccount } from "../utils/near";
 import { fetchSingleMetadata } from "./useNearMetadata";
 
 function useGetTargetParsedTokenAccounts() {
@@ -83,7 +80,7 @@ function useGetTargetParsedTokenAccounts() {
   } = useEthereumProvider();
   const xplaWallet = useXplaConnectedWallet();
   const hasCorrectEvmNetwork = evmChainId === getEvmChainId(targetChain);
-  const { accounts: algoAccounts } = useAlgorandContext();
+  const wallet = useWallet();
   const { account: aptosAccount } = useAptosContext();
   const aptosAddress = aptosAccount?.address?.toString();
   const { address: injAddress } = useInjectiveContext();
@@ -446,7 +443,7 @@ function useGetTargetParsedTokenAccounts() {
     }
     if (
       targetChain === CHAIN_ID_ALGORAND &&
-      algoAccounts[0] &&
+      wallet?.getPublicKey() &&
       decimals !== undefined
     ) {
       const algodClient = new Algodv2(
@@ -457,7 +454,7 @@ function useGetTargetParsedTokenAccounts() {
       try {
         const tokenId = BigInt(targetAsset);
         algodClient
-          .accountInformation(algoAccounts[0].address)
+          .accountInformation(wallet?.getPublicKey()!)
           .do()
           .then((accountInfo) => {
             let balance = 0;
@@ -477,7 +474,7 @@ function useGetTargetParsedTokenAccounts() {
             dispatch(
               setTargetParsedTokenAccount(
                 createParsedTokenAccount(
-                  algoAccounts[0].address,
+                  wallet?.getPublicKey()!,
                   targetAsset,
                   balance.toString(),
                   decimals,
@@ -605,7 +602,7 @@ function useGetTargetParsedTokenAccounts() {
     symbol,
     tokenName,
     logo,
-    algoAccounts,
+    wallet,
     decimals,
     xplaWallet,
     aptosAddress,

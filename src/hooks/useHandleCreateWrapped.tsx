@@ -26,7 +26,7 @@ import {
   updateWrappedOnInjective,
   updateWrappedOnSolana,
   updateWrappedOnTerra,
-  updateWrappedOnXpla,
+  updateWrappedOnXpla
 } from "@certusone/wormhole-sdk";
 import { WalletStrategy } from "@injectivelabs/wallet-ts";
 import { Alert } from "@material-ui/lab";
@@ -35,11 +35,11 @@ import { WalletContextState } from "@solana/wallet-adapter-react";
 import { Connection } from "@solana/web3.js";
 import {
   ConnectedWallet,
-  useConnectedWallet,
+  useConnectedWallet
 } from "@terra-money/wallet-provider";
 import {
   ConnectedWallet as XplaConnectedWallet,
-  useConnectedWallet as useXplaConnectedWallet,
+  useConnectedWallet as useXplaConnectedWallet
 } from "@xpla/wallet-provider";
 import algosdk from "algosdk";
 import { Types } from "aptos";
@@ -47,7 +47,7 @@ import { Signer } from "ethers";
 import { useSnackbar } from "notistack";
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useAlgorandContext } from "../contexts/AlgorandWalletContext";
+import { useWallet } from "wormhole-wallet-aggregator-react";
 import { useAptosContext } from "../contexts/AptosWalletContext";
 import { useEthereumProvider } from "../contexts/EthereumProviderContext";
 import { useInjectiveContext } from "../contexts/InjectiveWalletContext";
@@ -57,7 +57,7 @@ import { setCreateTx, setIsCreating } from "../store/attestSlice";
 import {
   selectAttestIsCreating,
   selectAttestTargetChain,
-  selectTerraFeeDenom,
+  selectTerraFeeDenom
 } from "../store/selectors";
 import { signSendAndConfirmAlgorand } from "../utils/algorand";
 import { waitForSignAndSubmitTransaction } from "../utils/aptos";
@@ -72,14 +72,14 @@ import {
   NEAR_TOKEN_BRIDGE_ACCOUNT,
   SOLANA_HOST,
   SOL_BRIDGE_ADDRESS,
-  SOL_TOKEN_BRIDGE_ADDRESS,
+  SOL_TOKEN_BRIDGE_ADDRESS
 } from "../utils/consts";
 import { broadcastInjectiveTx } from "../utils/injective";
 import { getKaruraGasParams } from "../utils/karura";
 import {
   makeNearAccount,
   makeNearProvider,
-  signAndSendTransactions,
+  signAndSendTransactions
 } from "../utils/near";
 import parseError from "../utils/parseError";
 import { signSendAndConfirm } from "../utils/solana";
@@ -442,7 +442,7 @@ export function useHandleCreateWrapped(shouldUpdate: boolean) {
   const terraWallet = useConnectedWallet();
   const terraFeeDenom = useSelector(selectTerraFeeDenom);
   const xplaWallet = useXplaConnectedWallet();
-  const { accounts: algoAccounts } = useAlgorandContext();
+  const algoWallet = useWallet();
   const { account: aptosAccount, signAndSubmitTransaction } = useAptosContext();
   const aptosAddress = aptosAccount?.address?.toString();
   const { wallet: injWallet, address: injAddress } = useInjectiveContext();
@@ -498,10 +498,10 @@ export function useHandleCreateWrapped(shouldUpdate: boolean) {
       );
     } else if (
       targetChain === CHAIN_ID_ALGORAND &&
-      algoAccounts[0] &&
+      algoWallet?.getPublicKey() &&
       !!signedVAA
     ) {
-      algo(dispatch, enqueueSnackbar, algoAccounts[0]?.address, signedVAA);
+      algo(dispatch, enqueueSnackbar, algoWallet.getPublicKey()!, signedVAA);
     } else if (
       targetChain === CHAIN_ID_INJECTIVE &&
       injWallet &&
@@ -542,14 +542,14 @@ export function useHandleCreateWrapped(shouldUpdate: boolean) {
     signer,
     shouldUpdate,
     terraFeeDenom,
-    algoAccounts,
+    algoWallet,
     xplaWallet,
     aptosAddress,
     signAndSubmitTransaction,
     injWallet,
     injAddress,
     nearAccountId,
-    wallet,
+    algoWallet,
   ]);
   return useMemo(
     () => ({

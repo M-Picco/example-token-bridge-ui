@@ -35,22 +35,22 @@ import {
   transferNativeSol,
   transferNearFromNear,
   transferTokenFromNear,
-  uint8ArrayToHex,
+  uint8ArrayToHex
 } from "@certusone/wormhole-sdk";
+import { CHAIN_ID_NEAR } from "@certusone/wormhole-sdk/lib/esm";
 import { transferTokens } from "@certusone/wormhole-sdk/lib/esm/aptos/api/tokenBridge";
 import { WalletStrategy } from "@injectivelabs/wallet-ts";
-import { CHAIN_ID_NEAR } from "@certusone/wormhole-sdk/lib/esm";
 import { Alert } from "@material-ui/lab";
 import { Wallet } from "@near-wallet-selector/core";
 import { WalletContextState } from "@solana/wallet-adapter-react";
 import { Connection } from "@solana/web3.js";
 import {
   ConnectedWallet,
-  useConnectedWallet,
+  useConnectedWallet
 } from "@terra-money/wallet-provider";
 import {
   ConnectedWallet as XplaConnectedWallet,
-  useConnectedWallet as useXplaConnectedWallet,
+  useConnectedWallet as useXplaConnectedWallet
 } from "@xpla/wallet-provider";
 import algosdk from "algosdk";
 import { Types } from "aptos";
@@ -59,7 +59,7 @@ import { parseUnits, zeroPad } from "ethers/lib/utils";
 import { useSnackbar } from "notistack";
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useAlgorandContext } from "../contexts/AlgorandWalletContext";
+import { useWallet } from "wormhole-wallet-aggregator-react";
 import { useAptosContext } from "../contexts/AptosWalletContext";
 import { useEthereumProvider } from "../contexts/EthereumProviderContext";
 import { useInjectiveContext } from "../contexts/InjectiveWalletContext";
@@ -77,19 +77,19 @@ import {
   selectTransferSourceAsset,
   selectTransferSourceChain,
   selectTransferSourceParsedTokenAccount,
-  selectTransferTargetChain,
+  selectTransferTargetChain
 } from "../store/selectors";
 import {
   setIsSending,
   setIsVAAPending,
   setSignedVAAHex,
-  setTransferTx,
+  setTransferTx
 } from "../store/transferSlice";
 import { signSendAndConfirmAlgorand } from "../utils/algorand";
 import {
   getAptosClient,
   getEmitterAddressAndSequenceFromResult,
-  waitForSignAndSubmitTransaction,
+  waitForSignAndSubmitTransaction
 } from "../utils/aptos";
 import {
   ALGORAND_BRIDGE_ID,
@@ -102,14 +102,14 @@ import {
   NEAR_TOKEN_BRIDGE_ACCOUNT,
   SOLANA_HOST,
   SOL_BRIDGE_ADDRESS,
-  SOL_TOKEN_BRIDGE_ADDRESS,
+  SOL_TOKEN_BRIDGE_ADDRESS
 } from "../utils/consts";
 import { getSignedVAAWithRetry } from "../utils/getSignedVAAWithRetry";
 import { broadcastInjectiveTx } from "../utils/injective";
 import {
   makeNearAccount,
   makeNearProvider,
-  signAndSendTransactions,
+  signAndSendTransactions
 } from "../utils/near";
 import parseError from "../utils/parseError";
 import { signSendAndConfirm } from "../utils/solana";
@@ -677,7 +677,7 @@ export function useHandleTransfer() {
   const terraWallet = useConnectedWallet();
   const terraFeeDenom = useSelector(selectTerraFeeDenom);
   const xplaWallet = useXplaConnectedWallet();
-  const { accounts: algoAccounts } = useAlgorandContext();
+  const algoWallet = useWallet();
   const { account: aptosAccount, signAndSubmitTransaction } = useAptosContext();
   const aptosAddress = aptosAccount?.address?.toString();
   const { wallet: injWallet, address: injAddress } = useInjectiveContext();
@@ -778,7 +778,7 @@ export function useHandleTransfer() {
       );
     } else if (
       sourceChain === CHAIN_ID_ALGORAND &&
-      algoAccounts[0] &&
+      algoWallet?.getPublicKey() &&
       !!sourceAsset &&
       decimals !== undefined &&
       !!targetAddress
@@ -786,7 +786,7 @@ export function useHandleTransfer() {
       algo(
         dispatch,
         enqueueSnackbar,
-        algoAccounts[0].address,
+        algoWallet.getPublicKey()!,
         sourceAsset,
         decimals,
         amount,
@@ -876,7 +876,7 @@ export function useHandleTransfer() {
     originChain,
     isNative,
     terraFeeDenom,
-    algoAccounts,
+    algoWallet,
     xplaWallet,
     aptosAddress,
     signAndSubmitTransaction,

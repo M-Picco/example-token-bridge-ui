@@ -1,27 +1,30 @@
 import {
-  cosmos,
   CHAIN_ID_ALGORAND,
-  CHAIN_ID_APTOS,
-  CHAIN_ID_NEAR,
+  CHAIN_ID_APTOS, CHAIN_ID_INJECTIVE, CHAIN_ID_NEAR,
   CHAIN_ID_SOLANA,
-  CHAIN_ID_XPLA,
-  isEVMChain,
+  CHAIN_ID_XPLA, cosmos, isEVMChain,
   isTerraChain,
-  uint8ArrayToHex,
-  CHAIN_ID_INJECTIVE,
+  uint8ArrayToHex
 } from "@certusone/wormhole-sdk";
 import { arrayify, zeroPad } from "@ethersproject/bytes";
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   Token,
-  TOKEN_PROGRAM_ID,
+  TOKEN_PROGRAM_ID
 } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import { useConnectedWallet } from "@terra-money/wallet-provider";
+import { useConnectedWallet as useXplaConnectedWallet } from "@xpla/wallet-provider";
+import { decodeAddress } from "algosdk";
+import BN from "bn.js";
+import { getTransactionLastResult } from "near-api-js/lib/providers";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useAlgorandContext } from "../contexts/AlgorandWalletContext";
+import { useWallet } from "wormhole-wallet-aggregator-react";
+import { useAptosContext } from "../contexts/AptosWalletContext";
 import { useEthereumProvider } from "../contexts/EthereumProviderContext";
+import { useInjectiveContext } from "../contexts/InjectiveWalletContext";
+import { useNearContext } from "../contexts/NearWalletContext";
 import { useSolanaWallet } from "../contexts/SolanaWalletContext";
 import { setTargetAddressHex as setNFTTargetAddressHex } from "../store/nftSlice";
 import {
@@ -29,18 +32,11 @@ import {
   selectNFTTargetChain,
   selectTransferTargetAsset,
   selectTransferTargetChain,
-  selectTransferTargetParsedTokenAccount,
+  selectTransferTargetParsedTokenAccount
 } from "../store/selectors";
 import { setTargetAddressHex as setTransferTargetAddressHex } from "../store/transferSlice";
-import { decodeAddress } from "algosdk";
-import { useConnectedWallet as useXplaConnectedWallet } from "@xpla/wallet-provider";
-import { useAptosContext } from "../contexts/AptosWalletContext";
-import { useInjectiveContext } from "../contexts/InjectiveWalletContext";
-import { useNearContext } from "../contexts/NearWalletContext";
-import { makeNearAccount, signAndSendTransactions } from "../utils/near";
 import { NEAR_TOKEN_BRIDGE_ACCOUNT } from "../utils/consts";
-import { getTransactionLastResult } from "near-api-js/lib/providers";
-import BN from "bn.js";
+import { makeNearAccount, signAndSendTransactions } from "../utils/near";
 
 function useSyncTargetAddress(shouldFire: boolean, nft?: boolean) {
   const dispatch = useDispatch();
@@ -59,7 +55,7 @@ function useSyncTargetAddress(shouldFire: boolean, nft?: boolean) {
   const targetTokenAccountPublicKey = targetParsedTokenAccount?.publicKey;
   const terraWallet = useConnectedWallet();
   const xplaWallet = useXplaConnectedWallet();
-  const { accounts: algoAccounts } = useAlgorandContext();
+  const algoWallet = useWallet();
   const { account: aptosAccount } = useAptosContext();
   const aptosAddress = aptosAccount?.address?.toString();
   const { address: injAddress } = useInjectiveContext();
@@ -143,10 +139,10 @@ function useSyncTargetAddress(shouldFire: boolean, nft?: boolean) {
         dispatch(
           setTargetAddressHex(uint8ArrayToHex(zeroPad(aptosAddress, 32)))
         );
-      } else if (targetChain === CHAIN_ID_ALGORAND && algoAccounts[0]) {
+      } else if (targetChain === CHAIN_ID_ALGORAND && algoWallet?.getPublicKey()) {
         dispatch(
           setTargetAddressHex(
-            uint8ArrayToHex(decodeAddress(algoAccounts[0].address).publicKey)
+            uint8ArrayToHex(decodeAddress(algoWallet.getPublicKey()!).publicKey)
           )
         );
       } else if (targetChain === CHAIN_ID_INJECTIVE && injAddress) {
@@ -222,7 +218,7 @@ function useSyncTargetAddress(shouldFire: boolean, nft?: boolean) {
     terraWallet,
     nft,
     setTargetAddressHex,
-    algoAccounts,
+    algoWallet,
     xplaWallet,
     aptosAddress,
     injAddress,

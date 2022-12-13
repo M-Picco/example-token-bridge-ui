@@ -7,26 +7,26 @@ import {
   CHAIN_ID_SOLANA,
   CHAIN_ID_XPLA,
   isEVMChain,
-  isTerraChain,
+  isTerraChain
 } from "@certusone/wormhole-sdk";
 import { hexlify, hexStripZeros } from "@ethersproject/bytes";
 import { useConnectedWallet } from "@terra-money/wallet-provider";
 import { useConnectedWallet as useXplaConnectedWallet } from "@xpla/wallet-provider";
 import { useCallback, useMemo } from "react";
-import { useAlgorandContext } from "../contexts/AlgorandWalletContext";
+import { useWallet } from "wormhole-wallet-aggregator-react";
 import { useAptosContext } from "../contexts/AptosWalletContext";
 import {
   ConnectType,
-  useEthereumProvider,
+  useEthereumProvider
 } from "../contexts/EthereumProviderContext";
+import { useInjectiveContext } from "../contexts/InjectiveWalletContext";
 import { useNearContext } from "../contexts/NearWalletContext";
 import { useSolanaWallet } from "../contexts/SolanaWalletContext";
 import { APTOS_NETWORK, CLUSTER, getEvmChainId } from "../utils/consts";
 import {
   EVM_RPC_MAP,
-  METAMASK_CHAIN_PARAMETERS,
+  METAMASK_CHAIN_PARAMETERS
 } from "../utils/metaMaskChainParameters";
-import { useInjectiveContext } from "../contexts/InjectiveWalletContext";
 
 const createWalletStatus = (
   isReady: boolean,
@@ -64,8 +64,8 @@ function useIsWalletReady(
   const hasEthInfo = !!provider && !!signerAddress;
   const correctEvmNetwork = getEvmChainId(chainId);
   const hasCorrectEvmNetwork = evmChainId === correctEvmNetwork;
-  const { accounts: algorandAccounts } = useAlgorandContext();
-  const algoPK = algorandAccounts[0]?.address;
+  const wallet = useWallet();
+  const algoPK = wallet?.getPublicKey();
   const xplaWallet = useXplaConnectedWallet();
   const hasXplaWallet = !!xplaWallet;
   const { account: aptosAccount, network: aptosNetwork } = useAptosContext();

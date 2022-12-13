@@ -59,7 +59,9 @@
     "recharts": "^2.1.9",
     "redux": "^3.7.2",
     "rxjs": "^7.5.6",
-    "use-debounce": "^7.0.0"
+    "use-debounce": "^7.0.0",
+    "wormhole-wallet-aggregator": "file:.yalc/wormhole-wallet-aggregator",
+    "wormhole-wallet-aggregator-react": "file:.yalc/wormhole-wallet-aggregator-react"
   },
   "scripts": {
     "start": "react-app-rewired start",

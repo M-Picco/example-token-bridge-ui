@@ -22,7 +22,7 @@ import {
   isEVMChain,
   isTerraChain,
   WSOL_ADDRESS,
-  WSOL_DECIMALS,
+  WSOL_DECIMALS
 } from "@certusone/wormhole-sdk";
 import { Dispatch } from "@reduxjs/toolkit";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
@@ -30,7 +30,7 @@ import {
   AccountInfo,
   Connection,
   ParsedAccountData,
-  PublicKey,
+  PublicKey
 } from "@solana/web3.js";
 import { Algodv2 } from "algosdk";
 import axios from "axios";
@@ -38,10 +38,10 @@ import { ethers } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useAlgorandContext } from "../contexts/AlgorandWalletContext";
+import { useWallet } from "wormhole-wallet-aggregator-react";
 import {
   Provider,
-  useEthereumProvider,
+  useEthereumProvider
 } from "../contexts/EthereumProviderContext";
 import { useNearContext } from "../contexts/NearWalletContext";
 import { useSolanaWallet } from "../contexts/SolanaWalletContext";
@@ -64,7 +64,7 @@ import {
   receiveSourceParsedTokenAccounts as receiveSourceParsedTokenAccountsNFT,
   setSourceParsedTokenAccount as setSourceParsedTokenAccountNFT,
   setSourceParsedTokenAccounts as setSourceParsedTokenAccountsNFT,
-  setSourceWalletAddress as setSourceWalletAddressNFT,
+  setSourceWalletAddress as setSourceWalletAddressNFT
 } from "../store/nftSlice";
 import {
   selectNFTSourceChain,
@@ -72,7 +72,7 @@ import {
   selectNFTSourceWalletAddress,
   selectSourceWalletAddress,
   selectTransferSourceChain,
-  selectTransferSourceParsedTokenAccounts,
+  selectTransferSourceParsedTokenAccounts
 } from "../store/selectors";
 import {
   errorSourceParsedTokenAccounts,
@@ -82,16 +82,14 @@ import {
   setAmount,
   setSourceParsedTokenAccount,
   setSourceParsedTokenAccounts,
-  setSourceWalletAddress,
+  setSourceWalletAddress
 } from "../store/transferSlice";
 import {
   ACA_ADDRESS,
   ACA_DECIMALS,
   ALGORAND_HOST,
-  ALGO_DECIMALS,
-  COVALENT_GET_TOKENS_URL,
-  BLOCKSCOUT_GET_TOKENS_URL,
-  KAR_ADDRESS,
+  ALGO_DECIMALS, BLOCKSCOUT_GET_TOKENS_URL, CELO_ADDRESS,
+  CELO_DECIMALS, COVALENT_GET_TOKENS_URL, getDefaultNativeCurrencyAddressEvm, KAR_ADDRESS,
   KAR_DECIMALS,
   NATIVE_NEAR_DECIMALS,
   NATIVE_NEAR_PLACEHOLDER,
@@ -99,10 +97,7 @@ import {
   WAVAX_ADDRESS,
   WAVAX_DECIMALS,
   WBNB_ADDRESS,
-  WBNB_DECIMALS,
-  CELO_ADDRESS,
-  CELO_DECIMALS,
-  WETH_ADDRESS,
+  WBNB_DECIMALS, WETH_ADDRESS,
   WETH_AURORA_ADDRESS,
   WETH_AURORA_DECIMALS,
   WETH_DECIMALS,
@@ -115,14 +110,13 @@ import {
   WNEON_ADDRESS,
   WNEON_DECIMALS,
   WROSE_ADDRESS,
-  WROSE_DECIMALS,
-  getDefaultNativeCurrencyAddressEvm,
+  WROSE_DECIMALS
 } from "../utils/consts";
 import { makeNearAccount } from "../utils/near";
 import {
   ExtractedMintInfo,
   extractMintInfo,
-  getMultipleAccountsRPC,
+  getMultipleAccountsRPC
 } from "../utils/solana";
 import { fetchSingleMetadata } from "./useAlgoMetadata";
 
@@ -858,7 +852,7 @@ function useGetAvailableTokens(nft: boolean = false) {
   const solanaWallet = useSolanaWallet();
   const solPK = solanaWallet?.publicKey;
   const { provider, signerAddress } = useEthereumProvider();
-  const { accounts: algoAccounts } = useAlgorandContext();
+  const wallet = useWallet();
   const { accountId: nearAccountId } = useNearContext();
 
   const [covalent, setCovalent] = useState<any>(undefined);
@@ -890,7 +884,7 @@ function useGetAvailableTokens(nft: boolean = false) {
     : lookupChain === CHAIN_ID_SOLANA
     ? solPK?.toString()
     : lookupChain === CHAIN_ID_ALGORAND
-    ? algoAccounts[0]?.address
+    ? wallet?.getPublicKey()
     : lookupChain === CHAIN_ID_NEAR
     ? nearAccountId || undefined
     : undefined;
