@@ -13,6 +13,7 @@ import {
 import CloseIcon from "@material-ui/icons/Close";
 import { WalletName, WalletReadyState } from "@solana/wallet-adapter-base";
 import { useWallet, Wallet } from "@solana/wallet-adapter-react";
+import { useSolanaWallet } from "../contexts/SolanaWalletContext";
 
 const useStyles = makeStyles((theme) => ({
   flexTitle: {
@@ -77,7 +78,7 @@ const SolanaConnectWalletDialog = ({
   onClose: () => void;
 }) => {
   const classes = useStyles();
-  const { wallets, select } = useWallet();
+  const { wallets, select } = useSolanaWallet();
 
   const [detected, undetected] = useMemo(() => {
     const detected: Wallet[] = [];

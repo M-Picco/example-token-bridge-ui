@@ -10,7 +10,7 @@ import {
 import CloseIcon from "@material-ui/icons/Close";
 import { useCallback } from "react";
 import { Wallet } from "wormhole-wallet-aggregator";
-import { useGetWalletsForChain } from "wormhole-wallet-aggregator-react";
+import { useWalletsForChain } from "wormhole-wallet-aggregator-react";
 
 const useStyles = makeStyles((theme) => ({
   flexTitle: {
@@ -68,8 +68,7 @@ const ConnectWalletDialog = ({
   onClose: () => void;
   chainId: ChainId;
 }) => {
-  const getWalletsForChain = useGetWalletsForChain();
-  const availableWallets = getWalletsForChain(chainId);
+  const availableWallets = useWalletsForChain(chainId);
 
   const classes = useStyles();
 

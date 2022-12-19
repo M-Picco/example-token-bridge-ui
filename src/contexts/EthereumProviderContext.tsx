@@ -1,20 +1,15 @@
 import { CHAIN_ID_ETH } from "@certusone/wormhole-sdk";
-import detectEthereumProvider from "@metamask/detect-provider";
-import WalletConnectProvider from "@walletconnect/web3-provider";
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import React, {
   ReactChildren,
   useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
+  useContext, useMemo,
+  useState
 } from "react";
 import { EthereumWallet, EthereumWalletConnectWallet, EthereumWeb3Wallet, Wallet } from "wormhole-wallet-aggregator";
-import { useGetWalletsForChain } from "wormhole-wallet-aggregator-react";
+import { useChangeWallet, useUnsetWalletFromChain, useWalletFromChain, useWalletsForChain } from "wormhole-wallet-aggregator-react";
 import metamaskIcon from "../icons/metamask-fox.svg";
 import walletconnectIcon from "../icons/walletconnect.svg";
-import { EVM_RPC_MAP } from "../utils/metaMaskChainParameters";
 const CacheSubprovider = require("web3-provider-engine/subproviders/cache");
 
 export type Provider = ethers.providers.Web3Provider | undefined;
@@ -67,10 +62,12 @@ export const EthereumProviderProvider = ({
   const [signerAddress, setSignerAddress] = useState<string | undefined>(
     undefined
   );
-  const [wallet, setWallet] = useState<Wallet | undefined>();
 
-  const getWalletsForChain = useGetWalletsForChain();
-  const availableWallets = getWalletsForChain(CHAIN_ID_ETH) as EthereumWallet[];
+  const wallet = useWalletFromChain(CHAIN_ID_ETH);
+  const changeWallet = useChangeWallet();
+  const unsetWalletFromChain = useUnsetWalletFromChain();
+
+  const availableWallets = useWalletsForChain(CHAIN_ID_ETH) as EthereumWallet[];
   const availableConnections: Connection[] = availableWallets.map((w: Wallet) => ({
     icon: w instanceof EthereumWeb3Wallet ? metamaskIcon : walletconnectIcon,
     name: w.getName(),
@@ -82,21 +79,23 @@ export const EthereumProviderProvider = ({
   );
 
   const disconnect = useCallback(async () => {
+    if (!wallet) return;
+
     await wallet?.disconnect();
-    setWallet(undefined);
+    unsetWalletFromChain(wallet!.getChainId());
     setProviderError(null);
     setProvider(undefined);
     setChainId(undefined);
     setSigner(undefined);
     setSignerAddress(undefined);
     setConnectType(undefined);
-  }, []);
+  }, [ wallet, unsetWalletFromChain ]);
 
   const connect = useCallback(async (connectType: ConnectType) => {
     const wallet = availableWallets.find(w => (connectType === ConnectType.METAMASK && w instanceof EthereumWeb3Wallet) ||
                                 (connectType === ConnectType.WALLETCONNECT && w instanceof EthereumWalletConnectWallet))!;
     await wallet.connect();
-    setWallet(wallet);
+    changeWallet(wallet);
 
     const provider = wallet.getProvider()!;
     const network = await provider.getNetwork();
@@ -108,7 +107,7 @@ export const EthereumProviderProvider = ({
     setChainId(network.chainId);
     setSigner(signer);
     setSignerAddress(signerAddress);
-  }, []);
+  }, [ availableWallets, changeWallet ]);
 
   const contextValue = useMemo(
     () => ({
