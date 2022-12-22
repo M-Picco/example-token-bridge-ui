@@ -60,8 +60,10 @@
     "redux": "^3.7.2",
     "rxjs": "^7.5.6",
     "use-debounce": "^7.0.0",
-    "wormhole-wallet-aggregator": "file:.yalc/wormhole-wallet-aggregator",
-    "wormhole-wallet-aggregator-react": "file:.yalc/wormhole-wallet-aggregator-react"
+    "wallet-aggregator-core": "file:../wallet-aggregator-sdk/packages/wallets/core",
+    "wallet-aggregator-evm": "file:../wallet-aggregator-sdk/packages/wallets/evm",
+    "wallet-aggregator-react": "file:../wallet-aggregator-sdk/packages/react",
+    "wallet-aggregator-solana": "file:../wallet-aggregator-sdk/packages/wallets/solana"
   },
   "scripts": {
     "start": "react-app-rewired start",
@@ -123,5 +125,10 @@
     "url": "^0.11.0",
     "util": "^0.12.4",
     "vm-browserify": "^1.1.2"
+  },
+  "resolutions": {
+    "wallet-aggregator-react": {
+      "wallet-aggregator-algorand": "file:.yalc/wallet-aggregator-algorand"
+    }
   }
 }

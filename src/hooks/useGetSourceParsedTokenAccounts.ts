@@ -38,7 +38,7 @@ import { ethers } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useWalletFromChain } from "wormhole-wallet-aggregator-react";
+import { useWalletFromChain } from "wallet-aggregator-react";
 import {
   Provider,
   useEthereumProvider

@@ -1,7 +1,7 @@
 import { ChainId } from "@certusone/wormhole-sdk";
 import { useCallback, useState } from "react";
-import { Wallet } from "wormhole-wallet-aggregator";
-import { useChangeWallet, useUnsetWalletFromChain, useWalletFromChain } from "wormhole-wallet-aggregator-react";
+import { Wallet } from "wallet-aggregator-core";
+import { useChangeWallet, useUnsetWalletFromChain, useWalletFromChain } from "wallet-aggregator-react";
 import ConnectWalletDialog from "./ConnectWalletDialog";
 import ToggleConnectedButton from "./ToggleConnectedButton";
 

@@ -4,7 +4,7 @@ import { SnackbarProvider } from "notistack";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { HashRouter } from "react-router-dom";
-import { initWallets, WalletContextProvider } from "wormhole-wallet-aggregator-react";
+import { initWallets, WalletContextProvider } from "wallet-aggregator-react";
 import App from "./App";
 import AptosWalletProvider from "./contexts/AptosWalletContext";
 import { EthereumProviderProvider } from "./contexts/EthereumProviderContext";

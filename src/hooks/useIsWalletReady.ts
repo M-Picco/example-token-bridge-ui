@@ -13,7 +13,8 @@ import { hexlify, hexStripZeros } from "@ethersproject/bytes";
 import { useConnectedWallet } from "@terra-money/wallet-provider";
 import { useConnectedWallet as useXplaConnectedWallet } from "@xpla/wallet-provider";
 import { useCallback, useMemo } from "react";
-import { useWalletFromChain } from "wormhole-wallet-aggregator-react";
+import { EVMWallet } from "wallet-aggregator-evm";
+import { useWalletFromChain } from "wallet-aggregator-react";
 import { useAptosContext } from "../contexts/AptosWalletContext";
 import {
   ConnectType,
@@ -60,6 +61,7 @@ function useIsWalletReady(
     chainId: evmChainId,
     connectType,
     disconnect,
+    wallet: ethWallet
   } = useEthereumProvider();
   const hasEthInfo = !!provider && !!signerAddress;
   const correctEvmNetwork = getEvmChainId(chainId);
@@ -83,43 +85,20 @@ function useIsWalletReady(
   const hasInjWallet = !!injAddress;
   const { accountId: nearPK } = useNearContext();
 
+  console.log('EVM CHAIN', evmChainId)
   const forceNetworkSwitch = useCallback(async () => {
     if (provider && correctEvmNetwork) {
       if (!isEVMChain(chainId)) {
         return;
       }
-      if (
-        connectType === ConnectType.WALLETCONNECT &&
-        EVM_RPC_MAP[correctEvmNetwork] === undefined
-      ) {
-        // WalletConnect requires a rpc url for this chain
-        // Force user to switch connect type
-        disconnect();
+
+      if (!ethWallet) {
         return;
       }
 
-      try {
-        await provider.send("wallet_switchEthereumChain", [
-          { chainId: hexStripZeros(hexlify(correctEvmNetwork)) },
-        ]);
-      } catch (switchError: any) {
-        // This error code indicates that the chain has not been added to MetaMask.
-        if (switchError.code === 4902) {
-          const addChainParameter =
-            METAMASK_CHAIN_PARAMETERS[correctEvmNetwork];
-          if (addChainParameter !== undefined) {
-            try {
-              await provider.send("wallet_addEthereumChain", [
-                addChainParameter,
-              ]);
-            } catch (addError) {
-              console.error(addError);
-            }
-          }
-        }
-      }
+      await (ethWallet as EVMWallet).switchChain(correctEvmNetwork);
     }
-  }, [provider, correctEvmNetwork, chainId, connectType, disconnect]);
+  }, [provider, correctEvmNetwork, ethWallet, chainId]);
 
   return useMemo(() => {
     if (isTerraChain(chainId) && hasTerraWallet && terraWallet?.walletAddress) {

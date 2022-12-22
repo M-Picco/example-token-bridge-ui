@@ -9,8 +9,8 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import { useCallback } from "react";
-import { Wallet } from "wormhole-wallet-aggregator";
-import { useWalletsForChain } from "wormhole-wallet-aggregator-react";
+import { Wallet } from "wallet-aggregator-core";
+import { useWalletsForChain } from "wallet-aggregator-react";
 
 const useStyles = makeStyles((theme) => ({
   flexTitle: {

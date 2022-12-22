@@ -1,7 +1,7 @@
 import { CHAIN_ID_SOLANA } from "@certusone/wormhole-sdk";
 import { Adapter, WalletAdapterNetwork, WalletName, WalletReadyState } from "@solana/wallet-adapter-base";
 import {
-  ConnectionProvider, useWallet, WalletContextState, WalletProvider
+  ConnectionProvider, WalletContextState, WalletProvider
 } from "@solana/wallet-adapter-react";
 import {
   BackpackWalletAdapter, BloctoWalletAdapter, CloverWalletAdapter,
@@ -9,9 +9,9 @@ import {
   TorusWalletAdapter
 } from "@solana/wallet-adapter-wallets";
 import { PublicKey } from "@solana/web3.js";
-import { FC, useCallback, useEffect, useMemo } from "react";
-import { SolanaWallet } from "wormhole-wallet-aggregator";
-import { useChangeWallet, useUnsetWalletFromChain, useWalletFromChain, useWalletsForChain } from "wormhole-wallet-aggregator-react";
+import { FC, useCallback, useMemo } from "react";
+import { useChangeWallet, useUnsetWalletFromChain, useWalletFromChain, useWalletsForChain } from "wallet-aggregator-react";
+import { SolanaWallet } from "wallet-aggregator-solana";
 import { CLUSTER, SOLANA_HOST } from "../utils/consts";
 
 export const SolanaWalletProvider: FC = (props) => {
