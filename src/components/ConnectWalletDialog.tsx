@@ -41,7 +41,7 @@ const WalletOptions = ({
 }) => {
   const handleClick = useCallback(() => {
     onSelect(wallet).then(onClose);
-  }, [wallet, onClose]);
+  }, [ wallet, onClose, onSelect ]);
 
   return (
     <ListItem button onClick={handleClick}>

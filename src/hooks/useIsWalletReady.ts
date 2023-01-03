@@ -9,7 +9,6 @@ import {
   isEVMChain,
   isTerraChain
 } from "@certusone/wormhole-sdk";
-import { hexlify, hexStripZeros } from "@ethersproject/bytes";
 import { useConnectedWallet } from "@terra-money/wallet-provider";
 import { useConnectedWallet as useXplaConnectedWallet } from "@xpla/wallet-provider";
 import { useCallback, useMemo } from "react";
@@ -17,17 +16,12 @@ import { EVMWallet } from "wallet-aggregator-evm";
 import { useWalletFromChain } from "wallet-aggregator-react";
 import { useAptosContext } from "../contexts/AptosWalletContext";
 import {
-  ConnectType,
   useEthereumProvider
 } from "../contexts/EthereumProviderContext";
 import { useInjectiveContext } from "../contexts/InjectiveWalletContext";
 import { useNearContext } from "../contexts/NearWalletContext";
 import { useSolanaWallet } from "../contexts/SolanaWalletContext";
 import { APTOS_NETWORK, CLUSTER, getEvmChainId } from "../utils/consts";
-import {
-  EVM_RPC_MAP,
-  METAMASK_CHAIN_PARAMETERS
-} from "../utils/metaMaskChainParameters";
 
 const createWalletStatus = (
   isReady: boolean,
@@ -59,8 +53,6 @@ function useIsWalletReady(
     provider,
     signerAddress,
     chainId: evmChainId,
-    connectType,
-    disconnect,
     wallet: ethWallet
   } = useEthereumProvider();
   const hasEthInfo = !!provider && !!signerAddress;
@@ -85,7 +77,6 @@ function useIsWalletReady(
   const hasInjWallet = !!injAddress;
   const { accountId: nearPK } = useNearContext();
 
-  console.log('EVM CHAIN', evmChainId)
   const forceNetworkSwitch = useCallback(async () => {
     if (provider && correctEvmNetwork) {
       if (!isEVMChain(chainId)) {

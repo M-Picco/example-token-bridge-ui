@@ -20,7 +20,7 @@ import BN from "bn.js";
 import { getTransactionLastResult } from "near-api-js/lib/providers";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useWallet, useWalletFromChain } from "wallet-aggregator-react";
+import { useWalletFromChain } from "wallet-aggregator-react";
 import { useAptosContext } from "../contexts/AptosWalletContext";
 import { useEthereumProvider } from "../contexts/EthereumProviderContext";
 import { useInjectiveContext } from "../contexts/InjectiveWalletContext";

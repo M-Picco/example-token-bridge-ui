@@ -593,7 +593,7 @@ export function useHandleAttest() {
     injWallet,
     injAddress,
     nearAccountId,
-    wallet,
+    algoWallet
   ]);
   return useMemo(
     () => ({

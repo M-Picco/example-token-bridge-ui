@@ -9,9 +9,6 @@ import React, {
 import { Wallet } from "wallet-aggregator-core";
 import { EVMWallet, EVMWalletConnectWallet, EVMWeb3Wallet } from "wallet-aggregator-evm";
 import { useChangeWallet, useUnsetWalletFromChain, useWalletFromChain, useWalletsForChain } from "wallet-aggregator-react";
-import metamaskIcon from "../icons/metamask-fox.svg";
-import walletconnectIcon from "../icons/walletconnect.svg";
-const CacheSubprovider = require("web3-provider-engine/subproviders/cache");
 
 export type Provider = ethers.providers.Web3Provider | undefined;
 export type Signer = ethers.Signer | undefined;
@@ -36,7 +33,6 @@ interface IEthereumProviderContext {
   signerAddress: string | undefined;
   providerError: string | null;
   availableConnections: Connection[];
-  connectType: ConnectType | undefined;
   wallet: Wallet | undefined;
 }
 
@@ -49,7 +45,6 @@ const EthereumProviderContext = React.createContext<IEthereumProviderContext>({
   signerAddress: undefined,
   providerError: null,
   availableConnections: [],
-  connectType: undefined,
   wallet: undefined
 });
 
@@ -71,29 +66,28 @@ export const EthereumProviderProvider = ({
   const unsetWalletFromChain = useUnsetWalletFromChain();
 
   const availableWallets = useWalletsForChain(CHAIN_ID_ETH) as EVMWallet[];
-  const availableConnections: Connection[] = availableWallets.map((w: Wallet) => ({
-    icon: w instanceof EVMWeb3Wallet ? metamaskIcon : walletconnectIcon,
+  const availableConnections: Connection[] = availableWallets.map((w: EVMWallet) => ({
+    icon: w.getIcon(),
     name: w.getName(),
     connectType: w instanceof EVMWeb3Wallet ? ConnectType.METAMASK : ConnectType.WALLETCONNECT
-  }))
+  }));
 
-  const [connectType, setConnectType] = useState<ConnectType | undefined>(
-    undefined
-  );
-
-  const disconnect = useCallback(async () => {
-    if (!wallet) return;
-
-    await wallet?.disconnect();
-    wallet.removeAllListeners();
+  const clearState = useCallback(async () => {
     unsetWalletFromChain(wallet!.getChainId());
     setProviderError(null);
     setProvider(undefined);
     setEvmChainId(undefined);
     setSigner(undefined);
     setSignerAddress(undefined);
-    setConnectType(undefined);
   }, [ wallet, unsetWalletFromChain ]);
+
+  const disconnect = useCallback(async () => {
+    if (!wallet) return;
+
+    await wallet?.disconnect();
+    wallet.removeAllListeners();
+    await clearState();
+  }, [ wallet, clearState ]);
 
   const connect = useCallback(async (connectType: ConnectType) => {
     const wallet: EVMWallet = availableWallets.find(w => (connectType === ConnectType.METAMASK && w instanceof EVMWeb3Wallet) ||
@@ -102,7 +96,6 @@ export const EthereumProviderProvider = ({
     changeWallet(wallet);
 
     wallet.on('accountsChanged', () => {
-      console.log('accounts changed')
       const signer = wallet.getSigner();
       const signerAddress = wallet.getPublicKey()!;
       setSigner(signer);
@@ -110,8 +103,12 @@ export const EthereumProviderProvider = ({
     });
 
     wallet.on('evmChainChanged', (newEvmChainId: number) => {
-      console.log('chain changed')
       setEvmChainId(newEvmChainId);
+    })
+
+    wallet.on('disconnect', () => {
+      // disconnected from device, clear state
+      clearState();
     })
 
     const provider = wallet.getProvider()!;
@@ -120,11 +117,10 @@ export const EthereumProviderProvider = ({
     const signerAddress = wallet.getPublicKey()!;
 
     setProvider(provider);
-    setConnectType(connectType);
     setEvmChainId(evmChainId);
     setSigner(signer);
     setSignerAddress(signerAddress);
-  }, [ availableWallets, changeWallet ]);
+  }, [ availableWallets, changeWallet, clearState ]);
 
   const contextValue = useMemo(
     () => ({
@@ -136,7 +132,6 @@ export const EthereumProviderProvider = ({
       signerAddress,
       providerError,
       availableConnections,
-      connectType,
       wallet
     }),
     [
@@ -148,7 +143,6 @@ export const EthereumProviderProvider = ({
       signerAddress,
       providerError,
       availableConnections,
-      connectType,
       wallet
     ]
   );

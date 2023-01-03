@@ -550,6 +550,7 @@ export function useHandleCreateWrapped(shouldUpdate: boolean) {
     injAddress,
     nearAccountId,
     algoWallet,
+    wallet
   ]);
   return useMemo(
     () => ({

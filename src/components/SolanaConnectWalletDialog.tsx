@@ -1,4 +1,3 @@
-import { useCallback, useMemo } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -8,11 +7,12 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  makeStyles,
+  makeStyles
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import { WalletName, WalletReadyState } from "@solana/wallet-adapter-base";
-import { useWallet, Wallet } from "@solana/wallet-adapter-react";
+import { Wallet } from "@solana/wallet-adapter-react";
+import { useCallback, useMemo } from "react";
 import { useSolanaWallet } from "../contexts/SolanaWalletContext";
 
 const useStyles = makeStyles((theme) => ({
