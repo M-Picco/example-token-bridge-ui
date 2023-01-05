@@ -60,9 +60,11 @@
     "redux": "^3.7.2",
     "rxjs": "^7.5.6",
     "use-debounce": "^7.0.0",
+    "wallet-aggregator-aptos": "file:../wallet-aggregator-sdk/packages/wallets/aptos",
     "wallet-aggregator-core": "file:../wallet-aggregator-sdk/packages/wallets/core",
     "wallet-aggregator-evm": "file:../wallet-aggregator-sdk/packages/wallets/evm",
     "wallet-aggregator-react": "file:../wallet-aggregator-sdk/packages/react",
+    "wallet-aggregator-react-init": "file:../wallet-aggregator-sdk/packages/react-init",
     "wallet-aggregator-solana": "file:../wallet-aggregator-sdk/packages/wallets/solana"
   },
   "scripts": {

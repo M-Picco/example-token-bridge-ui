@@ -81,8 +81,7 @@ function useGetTargetParsedTokenAccounts() {
   const xplaWallet = useXplaConnectedWallet();
   const hasCorrectEvmNetwork = evmChainId === getEvmChainId(targetChain);
   const wallet = useWalletFromChain(targetChain);
-  const { account: aptosAccount } = useAptosContext();
-  const aptosAddress = aptosAccount?.address?.toString();
+  const { address: aptosAddress } = useAptosContext();
   const { address: injAddress } = useInjectiveContext();
   const { accountId: nearAccountId } = useNearContext();
   const hasResolvedMetadata = metadata.data || metadata.error;

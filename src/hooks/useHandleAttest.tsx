@@ -545,8 +545,7 @@ export function useHandleAttest() {
   const xplaWallet = useXplaConnectedWallet();
   const terraFeeDenom = useSelector(selectTerraFeeDenom);
   const algoWallet = useWalletFromChain(sourceChain);
-  const { account: aptosAccount, signAndSubmitTransaction } = useAptosContext();
-  const aptosAddress = aptosAccount?.address?.toString();
+  const { address: aptosAddress, signAndSubmitTransaction } = useAptosContext();
   const { wallet: injWallet, address: injAddress } = useInjectiveContext();
   const { accountId: nearAccountId, wallet } = useNearContext();
   const disabled = !isTargetComplete || isSending || isSendComplete;

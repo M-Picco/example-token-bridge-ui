@@ -443,8 +443,7 @@ export function useHandleCreateWrapped(shouldUpdate: boolean) {
   const terraFeeDenom = useSelector(selectTerraFeeDenom);
   const xplaWallet = useXplaConnectedWallet();
   const algoWallet = useWalletFromChain(targetChain);
-  const { account: aptosAccount, signAndSubmitTransaction } = useAptosContext();
-  const aptosAddress = aptosAccount?.address?.toString();
+  const { address: aptosAddress, signAndSubmitTransaction } = useAptosContext();
   const { wallet: injWallet, address: injAddress } = useInjectiveContext();
   const { accountId: nearAccountId, wallet } = useNearContext();
   const handleCreateClick = useCallback(() => {
@@ -549,7 +548,6 @@ export function useHandleCreateWrapped(shouldUpdate: boolean) {
     injWallet,
     injAddress,
     nearAccountId,
-    algoWallet,
     wallet
   ]);
   return useMemo(

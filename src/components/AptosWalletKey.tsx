@@ -4,8 +4,7 @@ import AptosConnectWalletDialog from "./AptosConnectWalletDialog";
 import ToggleConnectedButton from "./ToggleConnectedButton";
 
 const AptosWalletKey = () => {
-  const { connected, disconnect, account } = useAptosContext();
-  const address = account?.address?.toString();
+  const { connected, disconnect, address } = useAptosContext();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const connect = useCallback(() => {

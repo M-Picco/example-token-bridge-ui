@@ -4,9 +4,9 @@ import { SnackbarProvider } from "notistack";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { HashRouter } from "react-router-dom";
-import { initWallets, WalletContextProvider } from "wallet-aggregator-react";
+import { WalletContextProvider } from "wallet-aggregator-react";
+import { initWallets } from "wallet-aggregator-react-init";
 import App from "./App";
-import AptosWalletProvider from "./contexts/AptosWalletContext";
 import { EthereumProviderProvider } from "./contexts/EthereumProviderContext";
 import InjectiveWalletProvider from "./contexts/InjectiveWalletContext";
 import { NearContextProvider } from "./contexts/NearWalletContext";
@@ -29,15 +29,13 @@ ReactDOM.render(
                 <EthereumProviderProvider>
                   <TerraWalletProvider>
                     <XplaWalletProvider>
-                      <AptosWalletProvider>
-                        <InjectiveWalletProvider>
-                          <NearContextProvider>
-                            <HashRouter>
-                              <App />
-                            </HashRouter>
-                          </NearContextProvider>
-                        </InjectiveWalletProvider>
-                      </AptosWalletProvider>
+                      <InjectiveWalletProvider>
+                        <NearContextProvider>
+                          <HashRouter>
+                            <App />
+                          </HashRouter>
+                        </NearContextProvider>
+                      </InjectiveWalletProvider>
                     </XplaWalletProvider>
                   </TerraWalletProvider>
                 </EthereumProviderProvider>

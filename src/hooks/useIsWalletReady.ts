@@ -62,16 +62,14 @@ function useIsWalletReady(
   const algoPK = wallet?.getPublicKey();
   const xplaWallet = useXplaConnectedWallet();
   const hasXplaWallet = !!xplaWallet;
-  const { account: aptosAccount, network: aptosNetwork } = useAptosContext();
-  const aptosAddress = aptosAccount?.address?.toString();
+  const { address: aptosAddress, network: aptosNetwork } = useAptosContext();
   const hasAptosWallet = !!aptosAddress;
   // The wallets do not all match on network names and the adapter doesn't seem to normalize this yet.
   // Petra = "Testnet"
   // Martian = "Testnet"
   // Pontam = "Aptos testnet"
   // Nightly = undefined... error on NightlyWallet.ts
-  const hasCorrectAptosNetwork = aptosNetwork?.name
-    ?.toLowerCase()
+  const hasCorrectAptosNetwork = aptosNetwork?.toLowerCase()
     .includes(APTOS_NETWORK.toLowerCase());
   const { address: injAddress } = useInjectiveContext();
   const hasInjWallet = !!injAddress;
