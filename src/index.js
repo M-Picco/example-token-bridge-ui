@@ -24,23 +24,21 @@ ReactDOM.render(
         <CssBaseline />
         <ErrorBoundary>
           <SnackbarProvider maxSnack={3}>
-            <SolanaWalletProvider>
-              <WalletContextProvider availableWallets={initWallets()}>
-                <EthereumProviderProvider>
-                  <TerraWalletProvider>
-                    <XplaWalletProvider>
-                      <InjectiveWalletProvider>
-                        <NearContextProvider>
-                          <HashRouter>
-                            <App />
-                          </HashRouter>
-                        </NearContextProvider>
-                      </InjectiveWalletProvider>
-                    </XplaWalletProvider>
-                  </TerraWalletProvider>
-                </EthereumProviderProvider>
-              </WalletContextProvider>
-            </SolanaWalletProvider>
+            <WalletContextProvider availableWallets={initWallets()}>
+              <EthereumProviderProvider>
+                <TerraWalletProvider>
+                  <XplaWalletProvider>
+                    <InjectiveWalletProvider>
+                      <NearContextProvider>
+                        <HashRouter>
+                          <App />
+                        </HashRouter>
+                      </NearContextProvider>
+                    </InjectiveWalletProvider>
+                  </XplaWalletProvider>
+                </TerraWalletProvider>
+              </EthereumProviderProvider>
+            </WalletContextProvider>
           </SnackbarProvider>
         </ErrorBoundary>
       </ThemeProvider>

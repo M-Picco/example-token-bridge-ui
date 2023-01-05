@@ -1,53 +1,11 @@
 import { CHAIN_ID_SOLANA } from "@certusone/wormhole-sdk";
-import { Adapter, WalletAdapterNetwork, WalletName, WalletReadyState } from "@solana/wallet-adapter-base";
-import {
-  ConnectionProvider, WalletContextState, WalletProvider
-} from "@solana/wallet-adapter-react";
-import {
-  BackpackWalletAdapter, BloctoWalletAdapter, CloverWalletAdapter,
-  Coin98WalletAdapter, ExodusWalletAdapter, NightlyWalletAdapter, PhantomWalletAdapter, SlopeWalletAdapter, SolflareWalletAdapter, SolletExtensionWalletAdapter, SolletWalletAdapter, SolongWalletAdapter,
-  TorusWalletAdapter
-} from "@solana/wallet-adapter-wallets";
+import { Adapter, WalletName, WalletReadyState } from "@solana/wallet-adapter-base";
+import { WalletContextState } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
-import { FC, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useChangeWallet, useUnsetWalletFromChain, useWalletFromChain, useWalletsForChain } from "wallet-aggregator-react";
 import { SolanaWallet } from "wallet-aggregator-solana";
-import { CLUSTER, SOLANA_HOST } from "../utils/consts";
 
-export const SolanaWalletProvider: FC = (props) => {
-  const wallets = useMemo(() => {
-    const wallets: Adapter[] = [
-      new PhantomWalletAdapter(),
-      new SolflareWalletAdapter(),
-      new BackpackWalletAdapter(),
-      new NightlyWalletAdapter(),
-      new SolletWalletAdapter(),
-      new SolletExtensionWalletAdapter(),
-      new CloverWalletAdapter(),
-      new Coin98WalletAdapter(),
-      new SlopeWalletAdapter(),
-      new SolongWalletAdapter(),
-      new TorusWalletAdapter(),
-      new ExodusWalletAdapter(),
-    ];
-    if (CLUSTER === "testnet") {
-      wallets.push(
-        new BloctoWalletAdapter({ network: WalletAdapterNetwork.Devnet })
-      );
-    }
-    return wallets;
-  }, []);
-
-  return (
-    <ConnectionProvider endpoint={SOLANA_HOST}>
-      <WalletProvider wallets={wallets} autoConnect>
-        {props.children}
-      </WalletProvider>
-    </ConnectionProvider>
-  );
-};
-
-// export const useSolanaWallet = useWallet;
 export const useSolanaWallet = (): WalletContextState => {
   const changeWallet = useChangeWallet();
   const unsetWalletFromChain = useUnsetWalletFromChain();
