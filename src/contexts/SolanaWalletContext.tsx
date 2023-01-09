@@ -39,7 +39,7 @@ export const useSolanaWallet = (): WalletContextState => {
   const walletMemo = useMemo(() => {
     return wallet ? ({
       adapter: (wallet as SolanaWallet).getAdapter() as Adapter,
-      readyState: WalletReadyState.Installed
+      readyState: WalletReadyState[wallet.getWalletState()]
     }) : null;
   }, [ wallet ]);
 
@@ -47,7 +47,7 @@ export const useSolanaWallet = (): WalletContextState => {
     return (wallets as SolanaWallet[])
       .map(w => ({
         adapter: w.getAdapter() as Adapter,
-        readyState: WalletReadyState.Installed
+        readyState: WalletReadyState[w.getWalletState()]
       }))
   }, [ wallets ]);
 

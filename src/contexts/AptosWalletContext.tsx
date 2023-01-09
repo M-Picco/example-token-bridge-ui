@@ -23,7 +23,7 @@ export const useAptosContext = (): AptosContextState => {
     return (wallets as AptosWallet[])
       .map(w => ({
         adapter: w.getAdapter() as BaseWalletAdapter,
-        readyState: WalletReadyState.Installed
+        readyState: WalletReadyState[w.getWalletState()]
       }))
   }, [ wallets ]);
 
